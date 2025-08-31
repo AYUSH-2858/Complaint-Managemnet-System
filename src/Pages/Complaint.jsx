@@ -54,7 +54,7 @@ const Complaint = () => {
   return (
     <div style={{ minHeight: '100vh', background: '#f3f4f6' }}>
       <div className="navbar" role="banner">
-        <h1>Complaint Portal</h1>
+        <h1>MES Complaint Portal</h1>
         <a href="/admin" role="link" aria-label="Go to Dashboard">Go to Dashboard</a>
       </div>
       <main className="container" role="main">

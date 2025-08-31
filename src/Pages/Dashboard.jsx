@@ -84,7 +84,7 @@ const Dashboard = () => {
           fontSize: '2rem',
           letterSpacing: '0.03em',
           margin: 0
-        }}>Complaints Dashboard</h2>
+        }}>MES Complaints Dashboard</h2>
       </div>
       <div style={{
         maxWidth: '900px',
