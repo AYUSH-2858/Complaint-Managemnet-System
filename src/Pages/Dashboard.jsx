@@ -34,9 +34,9 @@ const Dashboard = () => {
     fetchComplaints()
   }, [navigate])
 
-  const filteredComplaints = complaints.filter(c =>
-    filter === 'ALL' ? true : c.type === filter
-  )
+  const filteredComplaints = complaints
+    .filter(c => filter === 'ALL' ? true : c.type === filter)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
   const handlePrint = () => {
     const printContents = tableRef.current.innerHTML
