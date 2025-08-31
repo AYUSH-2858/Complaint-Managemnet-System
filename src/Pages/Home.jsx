@@ -35,7 +35,7 @@ const Home = () => {
             letterSpacing: "0.03em",
           }}
         >
-          Welcome to Complaint Portal
+          Welcome to Arjangarh Complaint Portal
         </h1>
         <Link
           to="/admin"
