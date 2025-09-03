@@ -5,6 +5,64 @@ import axios from 'axios'
 const FILTERS = ['ALL', 'B&R', 'E&M']
 
 const Dashboard = () => {
+  // Responsive styles for mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
+  const containerStyle = {
+    minHeight: '100vh',
+    background: '#f3f4f6',
+    padding: isMobile ? '0 2vw' : '0',
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+  };
+  const headerStyle = {
+    background: '#2563eb',
+    color: 'white',
+    padding: isMobile ? '16px 0 10px 0' : '24px 0 16px 0',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+    borderBottomLeftRadius: '18px',
+    borderBottomRightRadius: '18px',
+    marginBottom: isMobile ? '18px' : '32px'
+  };
+  const contentStyle = {
+    maxWidth: isMobile ? '100%' : '900px',
+    margin: '0 auto',
+    background: 'white',
+    borderRadius: '18px',
+    boxShadow: isMobile ? 'none' : '0 8px 32px rgba(0,0,0,0.10)',
+    padding: isMobile ? '16px 4px 12px 4px' : '32px 24px 24px 24px'
+  };
+  const actionsStyle = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    justifyContent: 'space-between',
+    alignItems: isMobile ? 'stretch' : 'center',
+    marginBottom: isMobile ? '12px' : '18px',
+    gap: isMobile ? '8px' : undefined
+  };
+  const filtersStyle = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    alignItems: isMobile ? 'stretch' : 'center',
+    marginBottom: isMobile ? '12px' : '8px',
+    gap: isMobile ? '8px' : undefined
+  };
+  const tableStyle = {
+    width: '100%',
+    borderCollapse: 'collapse',
+    background: 'white',
+    borderRadius: '12px',
+    boxShadow: isMobile ? 'none' : '0 4px 16px rgba(0,0,0,0.08)',
+    margin: '0 auto',
+    fontSize: isMobile ? '0.95rem' : undefined
+  };
+  const thtdStyle = {
+    padding: isMobile ? '8px 4px' : '12px',
+    maxWidth: isMobile ? '120px' : undefined,
+    wordBreak: 'break-word'
+  };
+  const thStyle = {
+    ...thtdStyle,
+    fontSize: isMobile ? '1rem' : undefined
+  };
   const [selectMode, setSelectMode] = useState(false)
   const [selectedComplaints, setSelectedComplaints] = useState([])
   const handleSelectToggle = () => {
@@ -31,7 +89,6 @@ const Dashboard = () => {
         { ids: selectedComplaints },
         { withCredentials: true }
       )
-      // Fetch updated complaints list after successful deletion
       const res = await axios.get(
         'https://complaint-backend-62o0.onrender.com/fetch',
         { withCredentials: true }
@@ -102,45 +159,19 @@ const Dashboard = () => {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#f3f4f6',
-      padding: '0',
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
-    }}>
-      <div style={{
-        background: '#2563eb',
-        color: 'white',
-        padding: '24px 0 16px 0',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-        borderBottomLeftRadius: '18px',
-        borderBottomRightRadius: '18px',
-        marginBottom: '32px'
-      }}>
+    <div style={containerStyle}>
+      <div style={headerStyle}>
         <h2 style={{
           textAlign: 'center',
           fontWeight: 700,
-          fontSize: '2rem',
+          fontSize: isMobile ? '1.2rem' : '2rem',
           letterSpacing: '0.03em',
           margin: 0
         }}>Arjangarh Complaints Dashboard</h2>
       </div>
-      <div style={{
-        maxWidth: '900px',
-        margin: '0 auto',
-        background: 'white',
-        borderRadius: '18px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.10)',
-        padding: '32px 24px 24px 24px'
-      }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '18px',
-        }}>
-          <div 
-            style={{ display:'flex', alignItems:'center', marginBottom:'8px' }}>
+      <div style={contentStyle}>
+        <div style={actionsStyle}>
+          <div style={filtersStyle}>
             {FILTERS.map(f => (
               <button
                 key={f}
@@ -253,23 +284,16 @@ const Dashboard = () => {
           <div style={{ color: '#dc2626', textAlign: 'center', fontWeight: 'bold', marginTop: '40px' }}>{error}</div>
         ) : (
           <div ref={tableRef} style={{ overflowX: 'auto' }}>
-            <table style={{
-              width: '100%',
-              borderCollapse: 'collapse',
-              background: 'white',
-              borderRadius: '12px',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-              margin: '0 auto'
-            }}>
+            <table style={tableStyle}>
               <thead>
                 <tr style={{ background: '#2563eb', color: 'white', position: 'sticky', top: 0 }}>
                   {selectMode && (
-                    <th style={{ padding: '12px', fontWeight: 700 }}>Select</th>
+                    <th style={{ ...thStyle, fontWeight: 700 }}>Select</th>
                   )}
-                  <th style={{ padding: '12px', fontWeight: 700 }}>Name</th>
-                  <th style={{ padding: '12px', fontWeight: 700 }}>Address</th>
-                  <th style={{ padding: '12px', fontWeight: 700 }}>Description</th>
-                  <th style={{ padding: '12px', fontWeight: 700 }}>Date &amp; Time</th>
+                  <th style={{ ...thStyle, fontWeight: 700 }}>Name</th>
+                  <th style={{ ...thStyle, fontWeight: 700 }}>Address</th>
+                  <th style={{ ...thStyle, fontWeight: 700 }}>Description</th>
+                  <th style={{ ...thStyle, fontWeight: 700 }}>Date &amp; Time</th>
                 </tr>
               </thead>
               <tbody>
@@ -287,7 +311,7 @@ const Dashboard = () => {
                       background: selectMode && selectedComplaints.includes(c._id) ? '#e0f2fe' : 'white'
                     }}>
                       {selectMode && (
-                        <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                        <td style={{ ...thtdStyle, textAlign: 'center' }}>
                           <input
                             type="checkbox"
                             checked={selectedComplaints.includes(c._id)}
@@ -295,17 +319,16 @@ const Dashboard = () => {
                           />
                         </td>
                       )}
-                      <td style={{ padding: '10px 12px' }}>{c.name}</td>
-                      <td style={{ padding: '10px 12px' }}>{c.address}</td>
+                      <td style={thtdStyle}>{c.name}</td>
+                      <td style={thtdStyle}>{c.address}</td>
                       <td style={{
-                        padding: '10px 12px',
-                        wordBreak: 'break-word',
+                        ...thtdStyle,
                         whiteSpace: 'pre-line',
-                        maxWidth: '320px'
+                        maxWidth: isMobile ? '120px' : '320px'
                       }}>
                         {c.description}
                       </td>
-                      <td style={{ padding: '10px 12px' }}>
+                      <td style={thtdStyle}>
                         {new Date(c.createdAt).toLocaleString()}
                       </td>
                     </tr>
