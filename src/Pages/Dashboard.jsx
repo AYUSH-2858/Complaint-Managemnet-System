@@ -5,6 +5,45 @@ import axios from 'axios'
 const FILTERS = ['ALL', 'B&R', 'E&M']
 
 const Dashboard = () => {
+  const [selectMode, setSelectMode] = useState(false)
+  const [selectedComplaints, setSelectedComplaints] = useState([])
+  const handleSelectToggle = () => {
+    setSelectMode(!selectMode)
+    setSelectedComplaints([])
+  }
+
+  const handleSelectComplaint = (id) => {
+    setSelectedComplaints(prev =>
+      prev.includes(id)
+        ? prev.filter(cid => cid !== id)
+        : [...prev, id]
+    )
+  }
+
+  const handleDeleteSelected = async () => {
+    if (selectedComplaints.length === 0) return
+    setLoading(true)
+    setError('')
+    console.log(selectedComplaints)
+    try {
+      await axios.post(
+        'https://complaint-backend-62o0.onrender.com/delete',
+        { ids: selectedComplaints },
+        { withCredentials: true }
+      )
+      // Fetch updated complaints list after successful deletion
+      const res = await axios.get(
+        'https://complaint-backend-62o0.onrender.com/fetch',
+        { withCredentials: true }
+      )
+      setComplaints(res.data.complaints || [])
+      setSelectedComplaints([])
+      setSelectMode(false)
+    } catch {
+      setError('Unable to delete selected complaints.')
+    }
+    setLoading(false)
+  }
   const navigate = useNavigate()
   const [complaints, setComplaints] = useState([])
   const [filter, setFilter] = useState('ALL')
@@ -124,6 +163,47 @@ const Dashboard = () => {
                 {f}
               </button>
             ))}
+            <button
+              onClick={handleSelectToggle}
+              style={{
+                marginLeft: '16px',
+                padding: '8px 18px',
+                borderRadius: '8px',
+                border: selectMode ? '2px solid #059669' : '1.5px solid #d1d5db',
+                background: selectMode ? '#059669' : '#f3f4f6',
+                color: selectMode ? '#fff' : '#059669',
+                fontWeight: 600,
+                cursor: 'pointer',
+                fontSize: '1rem',
+                boxShadow: selectMode ? '0 2px 8px rgba(5,150,105,0.10)' : 'none',
+                transition: 'all 0.2s',
+                display:'inline-block'
+              }}
+            >
+              {selectMode ? 'Cancel Select' : 'Select'}
+            </button>
+            {selectMode && (
+              <button
+                onClick={handleDeleteSelected}
+                style={{
+                  marginLeft: '10px',
+                  padding: '8px 18px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: '#dc2626',
+                  color: 'white',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  boxShadow: '0 2px 8px rgba(220,38,38,0.10)',
+                  transition: 'background 0.2s',
+                  display:'inline-block'
+                }}
+                disabled={selectedComplaints.length === 0}
+              >
+                Delete Selected
+              </button>
+            )}
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
@@ -183,6 +263,9 @@ const Dashboard = () => {
             }}>
               <thead>
                 <tr style={{ background: '#2563eb', color: 'white', position: 'sticky', top: 0 }}>
+                  {selectMode && (
+                    <th style={{ padding: '12px', fontWeight: 700 }}>Select</th>
+                  )}
                   <th style={{ padding: '12px', fontWeight: 700 }}>Name</th>
                   <th style={{ padding: '12px', fontWeight: 700 }}>Address</th>
                   <th style={{ padding: '12px', fontWeight: 700 }}>Description</th>
@@ -192,7 +275,7 @@ const Dashboard = () => {
               <tbody>
                 {filteredComplaints.length === 0 ? (
                   <tr>
-                    <td colSpan={4} style={{ textAlign: 'center', padding: '24px', color: '#6b7280' }}>
+                    <td colSpan={selectMode ? 5 : 4} style={{ textAlign: 'center', padding: '24px', color: '#6b7280' }}>
                       No complaints found.
                     </td>
                   </tr>
@@ -200,8 +283,18 @@ const Dashboard = () => {
                   filteredComplaints.map(c => (
                     <tr key={c._id} style={{
                       borderBottom: '1px solid #e5e7eb',
-                      transition: 'background 0.2s'
+                      transition: 'background 0.2s',
+                      background: selectMode && selectedComplaints.includes(c._id) ? '#e0f2fe' : 'white'
                     }}>
+                      {selectMode && (
+                        <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                          <input
+                            type="checkbox"
+                            checked={selectedComplaints.includes(c._id)}
+                            onChange={() => handleSelectComplaint(c._id)}
+                          />
+                        </td>
+                      )}
                       <td style={{ padding: '10px 12px' }}>{c.name}</td>
                       <td style={{ padding: '10px 12px' }}>{c.address}</td>
                       <td style={{
